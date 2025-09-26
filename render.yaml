@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: book-club-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server.app:app
+    envVars:
+      - key: SECRET_KEY
+        value: your-secret-key
+      - key: JWT_SECRET_KEY
+        value: jwt-secret-key
+      - key: DATABASE_URL
+        value: sqlite:///bookclub.db
+
+  - type: web
+    name: book-club-frontend
+    env: static-site
+    buildCommand: npm run build
+    staticSitePath: build
+    rootDir: client
+    envVars:
+      - key: REACT_APP_API_BASE_URL
+        value: https://book-club-backend.onrender.com
