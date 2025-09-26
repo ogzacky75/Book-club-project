@@ -4,8 +4,8 @@ from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity  # type: ignore
 )
 from flask_marshmallow import Marshmallow  # type: ignore
-from config import Config
-from models import db, User, Book, Review
+from .config import Config
+from .models import db, User, Book, Review
 
 app = Flask(__name__)
 app.config.from_object(Config)
