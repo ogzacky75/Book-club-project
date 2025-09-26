@@ -1,0 +1,10 @@
+{
+    "python-envs.defaultEnvManager": "ms-python.python:pipenv",
+    "python-envs.pythonProjects": [],
+    "cSpell.words": [
+        "Arrakis",
+        "itsdangerous",
+        "Neuromancer",
+        "sqlalchemy"
+    ]
+}
