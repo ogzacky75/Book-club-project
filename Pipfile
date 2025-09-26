@@ -20,6 +20,8 @@ MarkupSafe = "==3.0.2"
 SQLAlchemy = "==2.0.43"
 typing_extensions = "==4.15.0"
 flask-jwt-extended = "*"
+marshmallow = "==3.20.1"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 

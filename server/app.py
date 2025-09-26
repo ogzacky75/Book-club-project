@@ -1,11 +1,16 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import (
-    JWTManager, create_access_token, jwt_required, get_jwt_identity  # type: ignore
+    JWTManager, create_access_token, jwt_required, get_jwt_identity
 )
-from flask_marshmallow import Marshmallow  # type: ignore
-from .config import Config
-from .models import db, User, Book, Review
+from flask_marshmallow import Marshmallow
+
+from config import Config
+from models import db, User, Book, Review
+
+# ─────────────────────────────────────────────────────────────
+# App Initialization
+# ─────────────────────────────────────────────────────────────
 
 app = Flask(__name__)
 app.config.from_object(Config)
