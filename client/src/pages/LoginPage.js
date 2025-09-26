@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import './AuthPage.css';
 
+// ✅ Environment-based API URL
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 function Login() {
@@ -16,18 +17,25 @@ function Login() {
   });
 
   const handleSubmit = async (values) => {
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values)
-    });
-    const data = await response.json();
-    if (response.ok) {
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/books');
-    } else {
-      setError(data.error);
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/books');
+      } else {
+        setError(data.error || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Could not connect to server.');
     }
   };
 

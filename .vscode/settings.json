@@ -4,6 +4,7 @@
     "cSpell.words": [
         "Arrakis",
         "bookclub",
+        "gunicorn",
         "itsdangerous",
         "Neuromancer",
         "sqlalchemy"
