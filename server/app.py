@@ -1,10 +1,12 @@
+# server/app.py
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity
 )
-from flask_marshmallow import Marshmallow
-
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow import fields
 from config import Config
 from models import db, User, Book, Review
 
@@ -17,32 +19,31 @@ app.config.from_object(Config)
 
 CORS(app)
 jwt = JWTManager(app)
-ma = Marshmallow(app)
 db.init_app(app)
 
 # ─────────────────────────────────────────────────────────────
 # Schemas
 # ─────────────────────────────────────────────────────────────
 
-class UserSchema(ma.SQLAlchemyAutoSchema):
+class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
         exclude = ('password_hash',)
 
-class BookSchema(ma.SQLAlchemyAutoSchema):
+class BookSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Book
         load_instance = True
         exclude = ('reviews',)
-    user = ma.Nested(UserSchema)
+    user = fields.Nested(UserSchema)
 
-class ReviewSchema(ma.SQLAlchemyAutoSchema):
+class ReviewSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Review
         load_instance = True
-    user = ma.Nested(UserSchema)
-    book = ma.Nested(BookSchema)
+    user = fields.Nested(UserSchema)
+    book = fields.Nested(BookSchema)
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
