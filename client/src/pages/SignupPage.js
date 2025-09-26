@@ -1,3 +1,4 @@
+// src/pages/Signup.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -16,19 +17,29 @@ function Signup() {
     password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required')
   });
 
-  const handleSubmit = async (values) => {
-    const response = await fetch(`${API_BASE_URL}/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values)
-    });
-    const data = await response.json();
-    if (response.ok) {
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/books');
-    } else {
-      setError(data.error);
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setError('');
+    try {
+      const response = await fetch(`${API_BASE_URL}/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/books');
+      } else {
+        setError(data.error || 'Signup failed');
+      }
+    } catch (err) {
+      console.error('Signup error:', err);
+      setError('Could not connect to the server.');
+    } finally {
+      setSubmitting(false);
     }
   };
 

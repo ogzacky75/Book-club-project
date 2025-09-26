@@ -1,10 +1,10 @@
+// src/pages/Login.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import './AuthPage.css';
 
-// ✅ Environment-based API URL
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 function Login() {
@@ -16,7 +16,8 @@ function Login() {
     password: Yup.string().required('Password is required')
   });
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setError('');
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
@@ -35,7 +36,9 @@ function Login() {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Could not connect to server.');
+      setError('Could not connect to the server.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
