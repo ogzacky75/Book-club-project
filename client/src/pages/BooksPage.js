@@ -3,6 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import './BooksPage.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '${API_BASE_URL}';
+
 function Books() {
   const [books, setBooks] = useState([]);
   const [reviews, setReviews] = useState({});
@@ -20,7 +22,7 @@ function Books() {
   const fetchBooks = async () =>  {
     const token = localStorage.getItem('token');
     if (!token) return;
-    const response = await fetch('http://localhost:5000/books', {
+    const response = await fetch(`${API_BASE_URL}/books`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (response.ok) {
@@ -34,7 +36,7 @@ function Books() {
   const fetchReviews = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
-    const response = await fetch('http://localhost:5000/reviews', {
+    const response = await fetch(`${API_BASE_URL}/reviews`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (response.ok) {
@@ -57,7 +59,7 @@ function Books() {
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
-    const response = await fetch(`http://localhost:5000/books/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/books/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -80,7 +82,7 @@ function Books() {
 
   const handleDeleteReview = async (id) => {
     const token = localStorage.getItem('token');
-    const response = await fetch(`http://localhost:5000/reviews/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/reviews/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -156,7 +158,7 @@ function BookForm({ onAdd, editingBook, onCancel }) {
   const handleSubmit = async (values) => {
     const token = localStorage.getItem('token');
     const method = editingBook ? 'PATCH' : 'POST';
-    const url = editingBook ? `http://localhost:5000/books/${editingBook.id}` : 'http://localhost:5000/books';
+    const url = editingBook ? `${API_BASE_URL}/books/${editingBook.id}` : `${API_BASE_URL}/books`;
     const response = await fetch(url, {
       method,
       headers: {
@@ -213,7 +215,7 @@ function ReviewForm({ bookId, onAdd, editingReview, onCancel }) {
   const handleSubmit = async (values) => {
     const token = localStorage.getItem('token');
     const method = editingReview ? 'PATCH' : 'POST';
-    const url = editingReview ? `http://localhost:5000/reviews/${editingReview.id}` : 'http://localhost:5000/reviews';
+    const url = editingReview ? `${API_BASE_URL}/reviews/${editingReview.id}` : `${API_BASE_URL}/reviews`;
     const body = editingReview ? { ...values } : { ...values, book_id: bookId };
     const response = await fetch(url, {
       method,

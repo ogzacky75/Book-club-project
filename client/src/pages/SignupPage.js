@@ -4,6 +4,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import './AuthPage.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+
 function Signup() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ function Signup() {
   });
 
   const handleSubmit = async (values) => {
-    const response = await fetch('http://localhost:5000/signup', {
+    const response = await fetch(`${API_BASE_URL}/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values)
