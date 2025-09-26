@@ -7,9 +7,9 @@ from flask_jwt_extended import (
 )
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
-from config import Config
-from models import db, User, Book, Review
 
+from .config import Config
+from .models import db, User, Book, Review
 # ─────────────────────────────────────────────────────────────
 # App Initialization
 # ─────────────────────────────────────────────────────────────
