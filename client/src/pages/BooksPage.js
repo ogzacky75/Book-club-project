@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import './BooksPage.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '${API_BASE_URL}';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 function Books() {
   const [books, setBooks] = useState([]);
