@@ -1,21 +1,16 @@
 from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import (
-    JWTManager, create_access_token, jwt_required, get_jwt_identity
-)
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import timedelta  # <-- Fix for your previous error
+from datetime import timedelta
 
 # Import db and models
 from models import db, User, Book, Review
 
-jwt = JWTManager()
-
 def create_app():
     app = Flask(__name__)
     CORS(app)
-    
+
     # Config
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///books.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -24,7 +19,7 @@ def create_app():
 
     # Init extensions
     db.init_app(app)
-    jwt.init_app(app)
+    jwt = JWTManager(app)
 
     # Create tables
     with app.app_context():
@@ -35,12 +30,18 @@ def create_app():
     @app.route('/signup', methods=['POST'])
     def signup():
         data = request.json
-        if User.query.filter_by(username=data['username']).first():
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+
+        if User.query.filter_by(username=username).first():
             return jsonify({"error": "Username already exists"}), 400
-        hashed_pw = generate_password_hash(data['password'])
-        user = User(username=data['username'], email=data.get('email'), password_hash=hashed_pw)
+
+        hashed_pw = generate_password_hash(password)
+        user = User(username=username, email=email, password_hash=hashed_pw)
         db.session.add(user)
         db.session.commit()
+
         token = create_access_token(identity=user.id)
         return jsonify({
             "access_token": token,
@@ -50,9 +51,13 @@ def create_app():
     @app.route('/login', methods=['POST'])
     def login():
         data = request.json
-        user = User.query.filter_by(username=data['username']).first()
-        if not user or not check_password_hash(user.password_hash, data['password']):
+        username = data.get('username')
+        password = data.get('password')
+
+        user = User.query.filter_by(username=username).first()
+        if not user or not check_password_hash(user.password_hash, password):
             return jsonify({"error": "Invalid credentials"}), 401
+
         token = create_access_token(identity=user.id)
         return jsonify({
             "access_token": token,
@@ -83,7 +88,7 @@ def create_app():
 
     @app.route('/books', methods=['POST'])
     @jwt_required()
-    def create_book():
+    def add_book():
         data = request.json
         current_user_id = get_jwt_identity()
         book = Book(
@@ -99,7 +104,7 @@ def create_app():
 
     @app.route('/books/<int:book_id>', methods=['PATCH'])
     @jwt_required()
-    def edit_book(book_id):
+    def update_book(book_id):
         book = Book.query.get_or_404(book_id)
         current_user_id = get_jwt_identity()
         if book.user_id != current_user_id:
@@ -161,7 +166,7 @@ def create_app():
 
     @app.route('/reviews/<int:review_id>', methods=['PATCH'])
     @jwt_required()
-    def edit_review(review_id):
+    def update_review(review_id):
         review = Review.query.get_or_404(review_id)
         current_user_id = get_jwt_identity()
         if review.user_id != current_user_id:
@@ -184,7 +189,6 @@ def create_app():
         return jsonify({"msg": "Review deleted"}), 200
 
     return app
-
 
 # --- Run server ---
 if __name__ == '__main__':
