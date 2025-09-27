@@ -18,6 +18,7 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -27,6 +28,7 @@ class Book(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     reviews = db.relationship('Review', backref='book', lazy=True)
+
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
